@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>so101_description</name>
+  <version>0.0.0</version>
+  <description>SO101 ARM ROS2 Description</description>
+  <maintainer email="nicolas@gres.io">nicolas</maintainer>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>urdf_launch</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>rqt_joint_trajectory_controller</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>feetech_ros2_driver</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>gripper_controllers</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+  <exec_depend>hardware_interface</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

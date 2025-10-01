@@ -1,0 +1,55 @@
+services:
+  devcontainer:
+    image: ros2_so101:base
+    build:
+      context: ../
+      dockerfile: Dockerfile
+      args:
+        ROS_DISTRO: jazzy
+      target: base
+    container_name: ros2_so101_devcontainer
+
+    # === Tune this to your application ===
+    network_mode: "host"
+    ipc: "host"
+    pid: "host"
+    privileged: true
+    # ===
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+    command: /bin/bash
+    tty: true
+    stdin_open: true
+
+    volumes:
+      - $HOME/.Xauthority:/root/.Xauthority 
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw 
+      - /dev:/dev
+      - ../limits.conf:/etc/security/limits.conf
+
+    environment:
+      QT_X11_NO_MITSHM: 1
+      DISPLAY: $DISPLAY
+      ROS_DOMAIN_ID: 100
+      RCUTILS_COLORIZED_OUTPUT: 1
+      SHELL: /bin/bash
+
+    cap_add:
+      - SYS_NICE
+
+    ulimits:
+      rtprio: 99
+      rttime: -1
+      memlock: 8428281856
+      
+  lichtblick:
+    image: ghcr.io/lichtblick-suite/lichtblick:latest
+    network_mode: "host"
+    container_name: lichtblick
