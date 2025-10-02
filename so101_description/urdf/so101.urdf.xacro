@@ -1,26 +1,34 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="so101">
-  <xacro:arg name="ros2_control_hardware_type" default="mock_components" />
-  <xacro:arg
-    name="ros2_control_file"
-    default="$(find so101_description)/urdf/so101.ros2_control.xacro"
-  />
-  <xacro:arg
-    name="urdf_file"
-    default="$(find so101_description)/urdf/so101_new_calib.urdf.xacro"
-  />
   <xacro:arg name="prefix" default="" />
-  <xacro:arg name="usb_port" default="/dev/LeRobotFollower" />
+  <xacro:arg name="use_sim" default="false" />
+  <xacro:arg name="use_fake_hardware" default="false" />
+  <xacro:arg name="usb_port" default="/dev/ttyUSB0" />
+  <xacro:arg name="ros2_control_type" default="so101_position" />
 
-  <!-- Robot description -->
-  <xacro:include filename="$(arg urdf_file)" />
-  <xacro:so101_new_calib prefix="$(arg prefix)" />
+  <xacro:include filename="$(find so101_description)/urdf/so101_new_calib.urdf.xacro" />
 
-  <!-- ros2_control description -->
-  <xacro:include filename="$(arg ros2_control_file)" />
-  <xacro:ros2_control
-    ros2_control_hardware_type="$(arg ros2_control_hardware_type)"
-    usb_port="$(arg usb_port)"
-    prefix="$(arg prefix)"
-  />
+  <xacro:include
+    filename="$(find so101_description)/config/$(arg ros2_control_type).ros2_control.xacro" />
+
+  <link name="world" />
+
+  <joint name="$(arg prefix)world_fixed" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="world" />
+    <child link="$(arg prefix)base_link" />
+  </joint>
+
+  <xacro:so101 prefix="$(arg prefix)" />
+
+  <xacro:so101_ros2_control
+    name="so101_system" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    usb_port="$(arg usb_port)" />
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find so101_description)/config/controller_manager.yaml</parameters>
+    </plugin>
+  </gazebo>
 </robot>

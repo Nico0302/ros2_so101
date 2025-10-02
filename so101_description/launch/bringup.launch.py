@@ -24,7 +24,7 @@ from launch_ros.descriptions import ParameterValue
 default_controllers = [
     "joint_state_broadcaster",
     "gripper_controller",
-    "joint_trajectory_controller"
+    "arm_trajectory_controller"
 ]
 
 def generate_launch_description():
@@ -37,13 +37,8 @@ def generate_launch_description():
             description="URDF/XACRO description file with the robot.",
         )
     )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "active_controllers",
-            default_value=default_controllers,
-            description="Controller names to be active during launch.",
-        )
-    )
+    # Use static list for active controllers
+    # Remove DeclareLaunchArgument for active_controllers
     declared_arguments.append(
         DeclareLaunchArgument(
             "gui",
@@ -70,9 +65,16 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "hardware_type",
-            default_value="mock_components",
-            description="Hardware type for the robot. Supported types [mock_components, real]",
+            "use_sim",
+            default_value="false",
+            description="Use Gazebo sim",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_fake_hardware",
+            default_value="false",
+            description="Use mock system",
         )
     )
 
@@ -80,10 +82,10 @@ def generate_launch_description():
 
     # Initialize Arguments
     description_file = LaunchConfiguration("description_file")
-    active_controllers = LaunchConfiguration("active_controllers")
     gui = LaunchConfiguration("gui")
     prefix = LaunchConfiguration("prefix")
-    hardware_type = LaunchConfiguration("hardware_type")
+    use_sim = LaunchConfiguration("use_sim")
+    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     usb_port = LaunchConfiguration("usb_port")
 
     # Get URDF via xacro
@@ -99,8 +101,11 @@ def generate_launch_description():
                 "prefix:=",
                 prefix,
                 " ",
-                "ros2_control_hardware_type:=",
-                hardware_type,
+                "use_sim:=",
+                use_sim,
+                " ",
+                "use_fake_hardware:=",
+                use_fake_hardware,
                 " ",
                 "usb_port:=",
                 usb_port
@@ -113,8 +118,8 @@ def generate_launch_description():
     robot_controllers = PathJoinSubstitution(
         [
             so101_description_path,
-            "control",
-            "so101_controllers.yaml",
+            "config",
+            "controller_manager.yaml",
         ]
     )
 
@@ -126,7 +131,6 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[robot_controllers],
-        remappings=[("~/robot_description", "/robot_description")],
         output="both",
     )
     robot_state_publisher_node = Node(
@@ -150,7 +154,7 @@ def generate_launch_description():
         rviz_node
     ] 
 
-    for controller in active_controllers:
+    for controller in default_controllers:
         nodes.append(
             Node(
                 package="controller_manager",
