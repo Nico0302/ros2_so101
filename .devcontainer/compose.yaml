@@ -10,7 +10,7 @@ services:
     container_name: ros2_so101_devcontainer
 
     # === Tune this to your application ===
-    network_mode: "host"
+    # network_mode: "host"
     ipc: "host"
     pid: "host"
     privileged: true
@@ -39,6 +39,7 @@ services:
       DISPLAY: $DISPLAY
       ROS_DOMAIN_ID: 100
       RCUTILS_COLORIZED_OUTPUT: 1
+      RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
       SHELL: /bin/bash
 
     cap_add:
@@ -48,8 +49,3 @@ services:
       rtprio: 99
       rttime: -1
       memlock: 8428281856
-      
-  lichtblick:
-    image: ghcr.io/lichtblick-suite/lichtblick:latest
-    network_mode: "host"
-    container_name: lichtblick

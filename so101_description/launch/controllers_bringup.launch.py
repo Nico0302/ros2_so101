@@ -21,10 +21,10 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.descriptions import ParameterValue
 
-startup_controllers = [
+default_controllers = [
     "joint_state_broadcaster",
     "gripper_controller",
-    "cartesian_compliance_controller"
+    "joint_trajectory_controller"
 ]
 
 def generate_launch_description():
@@ -35,6 +35,13 @@ def generate_launch_description():
             "description_file",
             default_value="so101.urdf.xacro",
             description="URDF/XACRO description file with the robot.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "active_controllers",
+            default_value=default_controllers,
+            description="Controller names to be active during launch.",
         )
     )
     declared_arguments.append(
@@ -73,6 +80,7 @@ def generate_launch_description():
 
     # Initialize Arguments
     description_file = LaunchConfiguration("description_file")
+    active_controllers = LaunchConfiguration("active_controllers")
     gui = LaunchConfiguration("gui")
     prefix = LaunchConfiguration("prefix")
     hardware_type = LaunchConfiguration("hardware_type")
@@ -142,7 +150,7 @@ def generate_launch_description():
         rviz_node
     ] 
 
-    for controller in startup_controllers:
+    for controller in active_controllers:
         nodes.append(
             Node(
                 package="controller_manager",

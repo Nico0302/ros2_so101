@@ -25,6 +25,7 @@ RUN if getent group ${USER_GID}; then \
 
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && usermod -aG sudo,dialout,plugdev $USERNAME \
     && mkdir /home/$USERNAME/.config && chown $USER_UID:$USER_GID /home/$USERNAME/.config
 
 # Set up sudo
@@ -60,6 +61,7 @@ RUN apt-get update && \
     ros-$ROS_DISTRO-rmw-zenoh-cpp \
     ros-$ROS_DISTRO-urdf-launch \
     ros-$ROS_DISTRO-rqt-joint-trajectory-controller \
+    ros-$ROS_DISTRO-moveit \
     dpkg \
     freeglut3-dev \
     liblapacke-dev \
