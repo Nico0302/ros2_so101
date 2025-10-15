@@ -9,7 +9,14 @@ ARG MUJOCO_VERSION=3.2.6
 ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
+ARG USER_PASSWORD=ros
 ARG DEBIAN_FRONTEND=noninteractive
+
+# Disable dpkg/gdebi interactive dialogs
+ENV DEBIAN_FRONTEND=noninteractive
+
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=all
 
 SHELL ["/bin/bash", "-c"]
 
@@ -25,7 +32,8 @@ RUN if getent group ${USER_GID}; then \
 
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && usermod -aG sudo,dialout,plugdev $USERNAME \
+    && usermod -aG sudo,dialout,plugdev,video $USERNAME \
+    && echo "$USERNAME:$USER_PASSWORD" | chpasswd \
     && mkdir /home/$USERNAME/.config && chown $USER_UID:$USER_GID /home/$USERNAME/.config
 
 # Set up sudo
@@ -36,15 +44,23 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    apt-get install -y --no-install-recommends \
     vim \
     nano \
     xterm \
+    xfce4 \
+    xfce4-terminal \
+    xorgxrdp \
+    xrdp \
+    dbus-x11 \
+    xfonts-base \
     build-essential \
     cmake \
     wget \
     git \
     unzip \
+    iputils-ping \
+    net-tools \
     pip \
     python3-venv \
     python3-flake8 \
@@ -74,6 +90,9 @@ RUN apt-get update && \
 # Symlink python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
+# Expose VNC port
+EXPOSE 3389/tcp
+
 USER $USERNAME
 
 RUN mkdir -p /home/ros/ros2_ws
@@ -87,4 +106,4 @@ RUN git clone https://github.com/JafarAbdi/feetech_ros2_driver.git src/feetech_r
 RUN source /opt/ros/$ROS_DISTRO/setup.bash \
     && rosdep update \
     && rosdep install --ignore-src --from-paths . -y -r \
-    && colcon build --packages-skip cartesian_controller_simulation cartesian_controller_tests --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install 
+    && colcon build --packages-skip cartesian_controller_simulation cartesian_controller_tests --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install

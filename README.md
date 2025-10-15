@@ -16,7 +16,7 @@ lerobot-calibrate \
 ```
 
 ```bash
-ros2 launch so101_description controllers_bringup.launch.py hardware_type:=real usb_port:=/dev/ttyACM0
+ros2 launch so101_description bringup.launch.py usb_port:=/dev/ttyACM0
 ```
 
 ```bash

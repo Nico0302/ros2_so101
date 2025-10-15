@@ -5,9 +5,6 @@
     "dockerComposeFile": "./compose.yaml",
     "workspaceFolder": "/home/ros/ros2_ws/src/ros2_so101",
     "service": "devcontainer",
-    "forwardPorts": [
-        8080
-    ],
     "customizations": {
         "vscode": {
             "extensions": [
@@ -17,12 +14,15 @@
                 "streetsidesoftware.code-spell-checker",
                 "ranch-hand-robotics.rde-ros-2",
                 "ranch-hand-robotics.urdf-editor"
-            ]
+            ],
+            "settings": {
+                "remote.autoForwardPorts": false
+            }
         }
     },
     "mounts": [
         "source=${localWorkspaceFolder},target=/home/ros/ros2_ws/src/ros2_so101,type=bind,consistency=cached",
         "source=${localEnv:HOME}/.env,target=/home/ros/.env,type=bind,consistency=cached"
     ],
-    "postStartCommand": "/bin/bash /home/ros/ros2_ws/src/ros2_so101/.devcontainer/post_create.sh"
+    "postStartCommand": "/bin/bash /home/ros/ros2_ws/src/ros2_so101/scripts/post_create.sh"
 }

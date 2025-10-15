@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Some aliases to quickly get compile source and navigate to project
 alias proj="cd ~/ros2_ws/src"
 alias cb="cd ~/ros2_ws \

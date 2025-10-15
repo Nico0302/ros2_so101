@@ -8,14 +8,14 @@ from os import path
 
 # Default libsurvive configuration file
 CFG_FILE = path.join(
-    get_package_share_directory('cartesian_teleoperation'), 'config', 'libsurvive.cfg'
+    get_package_share_directory('cartesian_teleoperation'), 'config', 'libsurvive.json'
 )
 
 # Sow we don't have to repeat for composable and non-composable versions.
 # --configfile 
 PARAMETERS = [
-    {'driver_args': '--wow --v 100 --force-calibrate'},
-    {'tracking_frame': 'world'},
+    {'driver_args': f'--v 100 --force-calibrate'},
+    {'tracking_frame': 'teleop_world'},
     {'imu_topic': 'imu'},
     {'joy_topic': 'joy'},
     {'cfg_topic': 'cfg'},
