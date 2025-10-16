@@ -28,7 +28,7 @@ def generate_launch_description():
 
     teleop_node = Node(
         package="cartesian_teleoperation",
-        executable="teleoperation",
+        executable="pose",
         output="screen",
     )
 

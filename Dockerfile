@@ -78,6 +78,7 @@ RUN apt-get update && \
     ros-$ROS_DISTRO-urdf-launch \
     ros-$ROS_DISTRO-rqt-joint-trajectory-controller \
     ros-$ROS_DISTRO-moveit \
+    ros-$ROS_DISTR-tf-transformations \
     dpkg \
     freeglut3-dev \
     liblapacke-dev \

@@ -24,7 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'teleoperation = cartesian_teleoperation.teleoperation:main'
+            'gripper = cartesian_teleoperation.gripper:main',
+            'pose = cartesian_teleoperation.pose:main'
         ],
     },
 )
