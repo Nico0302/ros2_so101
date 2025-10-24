@@ -5,7 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded: ~
       Splitter Ratio: 0.5
-    Tree Height: 537
+    Tree Height: 614
   - Class: rviz_common/Views
     Expanded:
       - /Current View1
@@ -69,7 +69,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        moving_jaw_so101_v1_link:
+        moving_jaw_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -84,6 +84,10 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         wrist_link:
           Alpha: 1
           Show Axes: false
@@ -104,6 +108,12 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        LHB-AA55515F:
+          Value: true
+        LHB-DEAA21A:
+          Value: true
+        LHR-FF29DD46:
+          Value: true
         base_link:
           Value: true
         gripper_frame_link:
@@ -112,11 +122,15 @@ Visualization Manager:
           Value: true
         lower_arm_link:
           Value: true
-        moving_jaw_so101_v1_link:
+        moving_jaw_link:
           Value: true
         shoulder_link:
           Value: true
+        teleop_world:
+          Value: true
         upper_arm_link:
+          Value: true
+        world:
           Value: true
         wrist_link:
           Value: true
@@ -126,21 +140,48 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        base_link:
-          shoulder_link:
-            upper_arm_link:
-              lower_arm_link:
-                wrist_link:
-                  gripper_link:
-                    gripper_frame_link:
-                      {}
-                    moving_jaw_so101_v1_link:
-                      {}
+        teleop_world:
+          LHB-AA55515F:
+            {}
+          LHB-DEAA21A:
+            {}
+          LHR-FF29DD46:
+            {}
+          base_link:
+            shoulder_link:
+              upper_arm_link:
+                lower_arm_link:
+                  wrist_link:
+                    gripper_link:
+                      gripper_frame_link:
+                        {}
+                      moving_jaw_link:
+                        {}
       Update Interval: 0
+      Value: true
+    - Alpha: 0.5
+      Axes Length: 0.10000000149011612
+      Axes Radius: 0.009999999776482582
+      Class: rviz_default_plugins/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.019999999552965164
+      Head Radius: 0.019999999552965164
+      Name: Goal Pose
+      Shaft Length: 0.10000000149011612
+      Shaft Radius: 0.009999999776482582
+      Shape: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /target_end_effector_pose
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
+    Background Color: 239; 239; 239
     Fixed Frame: base_link
     Frame Rate: 30
   Name: root
@@ -153,35 +194,35 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 0.8991178870201111
+      Distance: 1.0562140941619873
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.06825058907270432
-        Y: 0.0874614343047142
-        Z: 0.03894732519984245
+        X: 0.17829442024230957
+        Y: -0.03319179639220238
+        Z: 0.04642176255583763
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.33000001311302185
+      Pitch: 0.24979794025421143
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.5
+      Yaw: 3.6350107192993164
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1531
+  Height: 897
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002d800000569fc0200000002fb000000100044006900730070006c0061007900730100000069000003070000017800fffffffb0000000a00560069006500770073010000037c000002560000012300ffffff000004520000056900000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000001d40000032bfc0200000002fb000000100044006900730070006c006100790073010000003b0000032b000000c700fffffffb0000000a0056006900650077007300000002bd000000a9000000a000ffffff0000040e0000032b00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1846
-  X: 569
-  Y: 218
+  Width: 1512
+  X: 0
+  Y: 27

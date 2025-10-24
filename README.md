@@ -16,11 +16,15 @@ lerobot-calibrate \
 ```
 
 ```bash
-ros2 launch so101_description bringup.launch.py usb_port:=/dev/ttyACM0
+ros2 launch so101_description bringup.launch.py usb_port:=/dev/ttyACM1
 ```
 
 ```bash
 ros2 launch cartesian_teleoperation vive.launch.py foxbridge:=true
+```
+
+```bash
+ros2 launch cartesian_teleoperation teleop.launch.py
 ```
 
 ## X11Forwarding

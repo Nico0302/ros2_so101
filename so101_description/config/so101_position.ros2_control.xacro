@@ -32,7 +32,7 @@
       </joint>
       <joint name="${prefix}shoulder_lift">
         <param name="id">2</param>
-        <param name="p_cofficient">16</param>
+        <param name="p_cofficient">40</param>
         <param name="offset">2100</param>
         <param name="initial_position">0.0</param>
         <command_interface name="position" />
@@ -42,7 +42,7 @@
       <joint name="${prefix}elbow_flex">
         <param name="id">3</param>
         <param name="offset">2040</param>
-        <param name="p_cofficient">16</param>
+        <param name="p_cofficient">40</param>
         <param name="initial_position">0.0</param>
         <command_interface name="position" />
         <state_interface name="position" />

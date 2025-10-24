@@ -37,14 +37,19 @@ def generate_launch_description():
             description="URDF/XACRO description file with the robot.",
         )
     )
-    # Use static list for active controllers
-    # Remove DeclareLaunchArgument for active_controllers
     declared_arguments.append(
         DeclareLaunchArgument(
             "gui",
             default_value="true",
             description="Start Rviz2 and Joint State Publisher gui automatically \
         with this launch file.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "controllers",
+            default_value="true",
+            description="Start the default controllers with this launch file.",
         )
     )
     declared_arguments.append(
@@ -83,6 +88,7 @@ def generate_launch_description():
     # Initialize Arguments
     description_file = LaunchConfiguration("description_file")
     gui = LaunchConfiguration("gui")
+    controllers = LaunchConfiguration("controllers")
     prefix = LaunchConfiguration("prefix")
     use_sim = LaunchConfiguration("use_sim")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
@@ -132,6 +138,7 @@ def generate_launch_description():
         executable="ros2_control_node",
         parameters=[robot_controllers],
         output="both",
+        condition=IfCondition(controllers),
     )
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
@@ -147,11 +154,19 @@ def generate_launch_description():
         arguments=["-d", rviz_config_file],
         condition=IfCondition(gui),
     )
+    static_tf = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="static_transform_publisher",
+        output="log",
+        arguments=["--frame-id", "world", "--child-frame-id", "base_link"],
+    )
 
     nodes = [
-        control_node,
         robot_state_publisher_node,
-        rviz_node
+        rviz_node,
+        control_node,
+        static_tf,
     ] 
 
     for controller in default_controllers:
@@ -160,6 +175,7 @@ def generate_launch_description():
                 package="controller_manager",
                 executable="spawner",
                 arguments=[controller],
+                condition=IfCondition(controllers),
             )
         )
 
