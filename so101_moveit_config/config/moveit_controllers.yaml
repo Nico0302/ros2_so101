@@ -4,10 +4,10 @@ moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControll
 
 moveit_simple_controller_manager:
   controller_names:
-    - arm_controller
+    - so101_arm_controller
     - gripper_controller
 
-  arm_controller:
+  so101_arm_controller:
     type: FollowJointTrajectory
     joints:
       - shoulder_pan
@@ -15,6 +15,7 @@ moveit_simple_controller_manager:
       - elbow_flex
       - wrist_flex
       - wrist_roll
+    action_ns: follow_joint_trajectory
   gripper_controller:
     type: GripperCommand
     joints:

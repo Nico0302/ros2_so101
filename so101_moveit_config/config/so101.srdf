@@ -28,6 +28,13 @@
         <joint name="wrist_flex" value="0"/>
         <joint name="wrist_roll" value="0"/>
     </group_state>
+    <group_state name="sleep" group="so101_arm">
+        <joint name="elbow_flex" value="1.578"/>
+        <joint name="shoulder_lift" value="-1.7453"/>
+        <joint name="shoulder_pan" value="0"/>
+        <joint name="wrist_flex" value="1.2"/>
+        <joint name="wrist_roll" value="0"/>
+    </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="gripper" parent_link="gripper_link" group="gripper" parent_group="so101_arm"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->

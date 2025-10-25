@@ -56,36 +56,9 @@ def generate_launch_description():
         launch_arguments={"prefix": prefix, "usb_port": usb_port, "use_sim": use_sim, "use_fake_hardware": use_fake_hardware, "start_rviz": "false"}.items(),
     )
 
-    xacro_mappings = {
-        "prefix": prefix,
-        "use_sim": use_sim,
-        "use_fake_hardware": use_fake_hardware,
-        "usb_port": usb_port,
-    }
-
-    robot_description = os.path.join(
-        get_package_share_directory("so101_description"),
-        "urdf",
-        "so101.urdf.xacro",
-    )
-
-    robot_controllers = os.path.join(
-        get_package_share_directory("so101_description"),
-        "config",
-        "controller_manager.yaml",
-    )
-
     moveit_config = (
         MoveItConfigsBuilder(
             "so101", package_name="so101_moveit_config"
-        )
-        .robot_description(file_path=robot_description, mappings=xacro_mappings)
-        .trajectory_execution(file_path=robot_controllers)
-        .planning_scene_monitor(
-            publish_robot_description=True, publish_robot_description_semantic=True
-        )
-        .planning_pipelines(
-            pipelines=["ompl", "stomp", "pilz_industrial_motion_planner"]
         )
         .to_moveit_configs()
     )
@@ -105,7 +78,6 @@ def generate_launch_description():
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
-        condition=IfCondition(start_rviz),
         output="log",
         arguments=["-d", rviz_config],
         parameters=[

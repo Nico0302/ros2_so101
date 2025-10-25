@@ -398,7 +398,7 @@
       <parent link="${prefix}upper_arm_link"/>
       <child link="${prefix}lower_arm_link"/>
       <axis xyz="0 0 1"/>
-      <limit effort="10" velocity="10" lower="-1.69" upper="1.69"/>
+      <limit effort="10" velocity="10" lower="-1.69" upper="1.5966"/>
     </joint>
 
     <transmission name="${prefix}elbow_flex_trans">

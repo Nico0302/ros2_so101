@@ -51,7 +51,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "controllers_file",
-            default_value="controller_manager.yaml",
+            default_value="ros2_controllers.yaml",
             description="YAML file with the controllers configuration.",
         ),
         DeclareLaunchArgument(
@@ -94,7 +94,7 @@ def generate_launch_description():
     arm_controller = LaunchConfiguration("arm_controller")
     controllers_package = LaunchConfiguration("controllers_package")
     controllers_file = LaunchConfiguration("controllers_file")
-    use_rviz = LaunchConfiguration("use_rviz")
+    start_rviz = LaunchConfiguration("start_rviz")
     prefix = LaunchConfiguration("prefix")
     use_sim = LaunchConfiguration("use_sim")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
@@ -157,7 +157,7 @@ def generate_launch_description():
         name="rviz2",
         output="log",
         arguments=["-d", rviz_config_file],
-        condition=IfCondition(use_rviz),
+        condition=IfCondition(start_rviz),
     )
     static_tf_node = Node(
         package="tf2_ros",
