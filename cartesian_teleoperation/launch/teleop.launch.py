@@ -1,65 +1,68 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
-from launch_ros.descriptions import ParameterValue
-from ament_index_python.packages import get_package_share_directory
-from launch_ros.actions import Node
+from launch_ros.actions import SetRemap, Node
+
+PACKAGE_NAME = "cartesian_teleoperation"
 
 
 def generate_launch_description():
-    package_path = FindPackageShare('cartesian_teleoperation')
-
-    arguments = [
-        DeclareLaunchArgument("usb_port", default_value="")
+    # Declare arguments
+    declared_arguments = [
+        DeclareLaunchArgument(
+            "prefix",
+            default_value='""',
+            description="Prefix of the joint names, useful for multi-robot setup.",
+        ),
+        DeclareLaunchArgument(
+            "usb_port",
+            default_value="/dev/ttyACM0",
+            description="USB port for the robot.",
+        ),
+        DeclareLaunchArgument(
+            "use_sim",
+            default_value="false",
+            description="Use Gazebo sim",
+        ),
+        DeclareLaunchArgument(
+            "use_fake_hardware",
+            default_value="false",
+            description="Use mock system",
+        ),
     ]
 
+    # Configuration variables
+    prefix = LaunchConfiguration("prefix")
     usb_port = LaunchConfiguration("usb_port")
+    use_sim = LaunchConfiguration("use_sim")
+    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
 
     vive_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution(
-                [package_path, "launch", "vive.launch.py"]
+                [FindPackageShare(PACKAGE_NAME), "launch", "vive.launch.py"]
             )
         )
     )
 
-    so101_bringup_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution(
-                [FindPackageShare("so101_description"), "launch", "bringup.launch.py"]
-            )
-        ),
-        launch_arguments={"usb_port": usb_port, "controllers": "false"}.items(),
-    )
+    so101_bringup_launch = GroupAction(
+        actions=[
 
-    so101_description_path = FindPackageShare('so101_description')
+            SetRemap(src='/cartesian_motion_controller/target_frame',dst='/target_frame'),
 
-    robot_description_content = ParameterValue(
-        Command(
-            [
-                PathJoinSubstitution([FindExecutable(name="xacro")]),
-                " ",
-                PathJoinSubstitution(
-                    [so101_description_path, "urdf", "so101.urdf.xacro"]
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    PathJoinSubstitution(
+                        [FindPackageShare("so101_description"), "launch", "bringup.launch.py"]
+                    )
                 ),
-                " ",
-                "usb_port:=",
-                usb_port
-            ]
-        ),
-        value_type=str
-    )
-    robot_description = {"robot_description": robot_description_content}
-
-    robot_controllers = PathJoinSubstitution(
-        [
-            package_path,
-            "config",
-            "controller_manager.yaml",
+                launch_arguments={"prefix": prefix, "usb_port": usb_port, "use_sim": use_sim, "use_fake_hardware": use_fake_hardware, "controllers_package": PACKAGE_NAME, "arm_controller": "cartesian_motion_controller"}.items(),
+        )
         ]
     )
+    
 
     teleop_node = Node(
         package="cartesian_teleoperation",
@@ -68,36 +71,9 @@ def generate_launch_description():
         parameters=[{"target_pose_topic": "target_frame"}]
     )
 
-    control_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[robot_description, robot_controllers],
-        output="both",
-        remappings=[
-            ("~/robot_description", "/robot_description"),
-            ("motion_control_handle/target_frame", "target_frame"),
-            ("cartesian_motion_controller/target_frame", "target_frame"),
-            ("cartesian_compliance_controller/target_frame", "target_frame"),
-            ("cartesian_force_controller/target_wrench", "target_wrench"),
-            ("cartesian_compliance_controller/target_wrench", "target_wrench"),
-            ("cartesian_force_controller/ft_sensor_wrench", "ft_sensor_wrench"),
-            ("cartesian_compliance_controller/ft_sensor_wrench", "ft_sensor_wrench"),
-        ],
-    )
-
     nodes = [
         so101_bringup_launch,
         teleop_node,
-        control_node
     ]
 
-    for controller in ["joint_state_broadcaster", "cartesian_motion_controller", "gripper_controller"]:
-        nodes.append(
-            Node(
-                package="controller_manager",
-                executable="spawner",
-                arguments=[controller],
-            )
-        )
-
-    return LaunchDescription(arguments + nodes)
+    return LaunchDescription(declared_arguments + nodes)

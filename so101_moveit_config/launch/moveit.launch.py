@@ -1,46 +1,94 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, GroupAction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch.conditions import IfCondition
 from moveit_configs_utils import MoveItConfigsBuilder
+from ament_index_python.packages import get_package_share_directory
+import os
 
 
 def generate_launch_description():
-    usb_port = LaunchConfiguration("usb_port")
-    use_sim_time = LaunchConfiguration("use_sim_time")
+    # Declare arguments
+    declared_arguments = [
+        DeclareLaunchArgument(
+            "start_rviz",
+            default_value="true",
+            description="Start Rviz2 automatically.",
+        ),
+        DeclareLaunchArgument(
+            "prefix",
+            default_value='""',
+            description="Prefix of the joint names, useful for multi-robot setup.",
+        ),
+        DeclareLaunchArgument(
+            "usb_port",
+            default_value="/dev/ttyACM0",
+            description="USB port for the robot.",
+        ),
+        DeclareLaunchArgument(
+            "use_sim",
+            default_value="false",
+            description="Use Gazebo sim",
+        ),
+        DeclareLaunchArgument(
+            "use_fake_hardware",
+            default_value="false",
+            description="Use mock system",
+        ),
+    ]
 
-    so101_description_path = FindPackageShare('so101_description')
+    # Configuration variables
+    start_rviz = LaunchConfiguration("start_rviz")
+    prefix = LaunchConfiguration("prefix")
+    usb_port = LaunchConfiguration("usb_port")
+    use_sim = LaunchConfiguration("use_sim")
+    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
+
+    so101_bringup_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [FindPackageShare("so101_description"), "launch", "bringup.launch.py"]
+            )
+        ),
+        launch_arguments={"prefix": prefix, "usb_port": usb_port, "use_sim": use_sim, "use_fake_hardware": use_fake_hardware, "start_rviz": "false"}.items(),
+    )
 
     xacro_mappings = {
-        "usb_port": "xxx.yyy.zzz.www",
-        "use_fake_hardware": "true",
-        "gripper": "robotiq_2f_85",
-        "dof": "7",
+        "prefix": prefix,
+        "use_sim": use_sim,
+        "use_fake_hardware": use_fake_hardware,
+        "usb_port": usb_port,
     }
 
-    robot_controllers = PathJoinSubstitution(
-        [
-            so101_description_path,
-            "config",
-            "controller_manager.yaml",
-        ]
+    robot_description = os.path.join(
+        get_package_share_directory("so101_description"),
+        "urdf",
+        "so101.urdf.xacro",
+    )
+
+    robot_controllers = os.path.join(
+        get_package_share_directory("so101_description"),
+        "config",
+        "controller_manager.yaml",
     )
 
     moveit_config = (
-    MoveItConfigsBuilder(
-        "so101", package_name="so101_moveit_config"
+        MoveItConfigsBuilder(
+            "so101", package_name="so101_moveit_config"
+        )
+        .robot_description(file_path=robot_description, mappings=xacro_mappings)
+        .trajectory_execution(file_path=robot_controllers)
+        .planning_scene_monitor(
+            publish_robot_description=True, publish_robot_description_semantic=True
+        )
+        .planning_pipelines(
+            pipelines=["ompl", "stomp", "pilz_industrial_motion_planner"]
+        )
+        .to_moveit_configs()
     )
-    .robot_description(mappings=xacro_mappings)
-    .trajectory_execution(file_path=robot_controllers)
-    .planning_scene_monitor(
-        publish_robot_description=True, publish_robot_description_semantic=True
-    )
-    .planning_pipelines(
-        pipelines=["ompl", "stomp", "pilz_industrial_motion_planner"]
-    )
-    .to_moveit_configs()
-)
 
     run_move_group_node = Node(
         package="moveit_ros_move_group",
@@ -57,6 +105,7 @@ def generate_launch_description():
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
+        condition=IfCondition(start_rviz),
         output="log",
         arguments=["-d", rviz_config],
         parameters=[
@@ -68,46 +117,5 @@ def generate_launch_description():
         ],
     )
 
-    # Static TF
-    static_tf = Node(
-        package="tf2_ros",
-        executable="static_transform_publisher",
-        name="static_transform_publisher",
-        output="log",
-        arguments=["--frame-id", "world", "--child-frame-id", "base_link"],
-    )
+    return LaunchDescription(declared_arguments + [so101_bringup_launch, run_move_group_node, rviz_node])
 
-    # Publish TF
-    robot_state_publisher_node = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        name="robot_state_publisher",
-        output="both",
-        parameters=[moveit_config.robot_description],
-    )
-
-    control_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[robot_controllers],
-        output="both",
-    )
-
-    nodes = [
-        robot_state_publisher_node,
-        rviz_node,
-        control_node,
-        static_tf,
-    ] 
-
-    for controller in default_controllers:
-        nodes.append(
-            Node(
-                package="controller_manager",
-                executable="spawner",
-                arguments=[controller],
-            )
-        )
-
-    
-    

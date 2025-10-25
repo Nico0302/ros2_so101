@@ -51,7 +51,7 @@
       <joint name="${prefix}wrist_flex">
         <param name="id">4</param>
         <param name="offset">1946</param>
-        <param name="p_cofficient">16</param>
+        <param name="p_cofficient">4</param>
         <param name="initial_position">0.0</param>
         <command_interface name="position" />
         <state_interface name="position" />

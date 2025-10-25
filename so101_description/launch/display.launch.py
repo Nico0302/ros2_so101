@@ -12,7 +12,7 @@ def generate_launch_description():
     default_rviz_config_path = PathJoinSubstitution([so101_description_path, 'rviz', 'so101.rviz'])
 
     # These parameters are maintained for backwards compatibility
-    gui_arg = DeclareLaunchArgument(name='gui', default_value='true', choices=['true', 'false'],
+    gui_arg = DeclareLaunchArgument(name='use_gui', default_value='true', choices=['true', 'false'],
                                     description='Flag to enable joint_state_publisher_gui')
     ld.add_action(gui_arg)
     rviz_arg = DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path,
@@ -29,7 +29,7 @@ def generate_launch_description():
             'urdf_package': 'so101_description',
             'urdf_package_path': LaunchConfiguration('model'),
             'rviz_config': LaunchConfiguration('rvizconfig'),
-            'jsp_gui': LaunchConfiguration('gui')}.items()
+            'jsp_gui': LaunchConfiguration('use_gui')}.items()
     ))
 
     return ld
