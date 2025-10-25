@@ -6,15 +6,13 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.conditions import IfCondition
 from moveit_configs_utils import MoveItConfigsBuilder
-from ament_index_python.packages import get_package_share_directory
-import os
 
 
 def generate_launch_description():
     # Declare arguments
     declared_arguments = [
         DeclareLaunchArgument(
-            "start_rviz",
+            "gui",
             default_value="true",
             description="Start Rviz2 automatically.",
         ),
@@ -41,7 +39,7 @@ def generate_launch_description():
     ]
 
     # Configuration variables
-    start_rviz = LaunchConfiguration("start_rviz")
+    gui = LaunchConfiguration("gui")
     prefix = LaunchConfiguration("prefix")
     usb_port = LaunchConfiguration("usb_port")
     use_sim = LaunchConfiguration("use_sim")
@@ -71,7 +69,7 @@ def generate_launch_description():
     )
 
     rviz_config = PathJoinSubstitution(
-        [FindPackageShare("so101_moveit_config"), "launch", "moveit.rviz"]
+        [FindPackageShare("so101_moveit_config"), "rviz", "moveit.rviz"]
     )
 
     # Launch RViz
@@ -80,6 +78,7 @@ def generate_launch_description():
         executable="rviz2",
         output="log",
         arguments=["-d", rviz_config],
+        condition=IfCondition(gui),
         parameters=[
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,

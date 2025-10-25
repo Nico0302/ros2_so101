@@ -32,8 +32,8 @@
       </joint>
       <joint name="${prefix}shoulder_lift">
         <param name="id">2</param>
-        <param name="p_cofficient">40</param>
-        <param name="offset">2010</param>
+        <param name="p_cofficient">16</param>
+        <param name="offset">1990</param>
         <param name="initial_position">0.0</param>
         <command_interface name="position" />
         <state_interface name="position" />
@@ -41,8 +41,8 @@
       </joint>
       <joint name="${prefix}elbow_flex">
         <param name="id">3</param>
-        <param name="offset">2040</param>
-        <param name="p_cofficient">40</param>
+        <param name="offset">2068</param>
+        <param name="p_cofficient">16</param>
         <param name="initial_position">0.0</param>
         <command_interface name="position" />
         <state_interface name="position" />
@@ -50,8 +50,8 @@
       </joint>
       <joint name="${prefix}wrist_flex">
         <param name="id">4</param>
-        <param name="offset">2050</param>
-        <param name="p_cofficient">4</param>
+        <param name="offset">2048</param>
+        <param name="p_cofficient">16</param>
         <param name="initial_position">0.0</param>
         <command_interface name="position" />
         <state_interface name="position" />
@@ -59,7 +59,7 @@
       </joint>
       <joint name="${prefix}wrist_roll">
         <param name="id">5</param>
-        <param name="offset">1942</param>
+        <param name="offset">1982</param>
         <param name="p_cofficient">16</param>
         <param name="initial_position">0.0</param>
         <command_interface name="position" />
@@ -68,7 +68,7 @@
       </joint>
       <joint name="${prefix}gripper">
         <param name="id">6</param>
-        <param name="offset">2070</param>
+        <param name="offset">2048</param>
         <param name="p_cofficient">16</param>
         <param name="initial_position">0.0</param>
         <command_interface name="position" />

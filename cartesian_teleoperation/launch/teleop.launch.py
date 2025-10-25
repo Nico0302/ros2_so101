@@ -68,7 +68,7 @@ def generate_launch_description():
         package="cartesian_teleoperation",
         executable="pose",
         output="screen",
-        parameters=[{"target_pose_topic": "target_frame"}]
+        parameters=[{"target_pose_topic": "target_frame", "end_effector_frame_id": "gripper_frame_link"}],
     )
 
     nodes = [

@@ -232,7 +232,7 @@ class PoseTeleoperation(Node):
         msg.header.frame_id = self.base_frame_id
         msg.pose.position.x = b_T_c.transform.translation.x - self.transform_delta.translation.x
         msg.pose.position.y = b_T_c.transform.translation.y - self.transform_delta.translation.y
-        msg.pose.position.z = b_T_c.transform.translation.z - self.transform_delta.translation.z
+        msg.pose.position.z = max(b_T_c.transform.translation.z - self.transform_delta.translation.z, 0.0)
         msg.pose.orientation.x, msg.pose.orientation.y, msg.pose.orientation.z, msg.pose.orientation.w = tf_transformations.quaternion_multiply(self._quaternion_to_array(b_T_c.transform.rotation), tf_transformations.quaternion_conjugate(self._quaternion_to_array(self.transform_delta.rotation)))
         
         try:
