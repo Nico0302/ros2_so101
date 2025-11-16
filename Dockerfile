@@ -3,7 +3,6 @@ ARG ROS_DISTRO=jazzy
 FROM osrf/ros:${ROS_DISTRO}-desktop AS base
 
 ENV ROS_DISTRO=${ROS_DISTRO}
-ARG MUJOCO_VERSION=3.2.6
 
 # Create a non-root user
 ARG USERNAME=ros
@@ -48,12 +47,14 @@ RUN apt-get update && \
     vim \
     nano \
     xterm \
+    # === XRDP related packages === #
     xfce4 \
     xfce4-terminal \
     xorgxrdp \
     xrdp \
     dbus-x11 \
     xfonts-base \
+    # ============================== #
     build-essential \
     cmake \
     wget \
@@ -69,8 +70,6 @@ RUN apt-get update && \
     python3-vcstool \
     python3-colcon-common-extensions \
     cmake \
-    libpoco-dev \
-    libeigen3-dev \
     ros-$ROS_DISTRO-ros2-control \
     ros-$ROS_DISTRO-ros2-controllers \
     ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
@@ -79,14 +78,11 @@ RUN apt-get update && \
     ros-$ROS_DISTRO-rqt-joint-trajectory-controller \
     ros-$ROS_DISTRO-moveit \
     ros-$ROS_DISTRO-tf-transformations \
-    dpkg \
-    freeglut3-dev \
-    liblapacke-dev \
-    libopenblas-dev \
-    libpcap-dev \
-    libusb-1.0-0-dev \
-    libx11-dev \
-    zlib1g-dev
+    dpkg
+
+COPY ./workspace.packages ./
+
+RUN xargs -a workspace.packages apt-get install -y --no-install-recommends
 
 # Symlink python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
@@ -96,15 +92,21 @@ EXPOSE 3389/tcp
 
 USER $USERNAME
 
-RUN mkdir -p /home/ros/ros2_ws
+RUN mkdir -p /home/ros/ros2_ws/src
 
 WORKDIR /home/ros/ros2_ws
 
-RUN git clone -b ros2 https://github.com/fzi-forschungszentrum-informatik/cartesian_controllers.git src/cartesian_controllers 
-RUN git clone https://github.com/asymingt/libsurvive_ros2.git src/libsurvive_ros2 
-RUN git clone https://github.com/JafarAbdi/feetech_ros2_driver.git src/feetech_ros2_driver 
+COPY ./workspace.repos ./
+
+RUN vcs import src < workspace.repos
     
 RUN source /opt/ros/$ROS_DISTRO/setup.bash \
     && rosdep update \
-    && rosdep install --ignore-src --from-paths . -y -r \
-    && colcon build --packages-skip cartesian_controller_simulation cartesian_controller_tests --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install
+    && rosdep install --ignore-src --from-paths . -y -r
+
+COPY ./Makefile ./
+
+RUN source /opt/ros/$ROS_DISTRO/setup.bash \
+    && make build
+
+RUN printf "\nsource /opt/ros/$ROS_DISTRO/setup.bash\nsource ~/ros2_ws/install/setup.bash\nsource ~/ros2_ws/src/ros2_so101/scripts/ros_aliases.sh\n" >> ~/.bashrc

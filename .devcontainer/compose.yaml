@@ -16,7 +16,7 @@ services:
     # ===
 
     ports:
-      - 3389:3389
+      - 3389:3389 # RDP
 
     deploy:
       resources:

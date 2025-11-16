@@ -1,0 +1,13 @@
+repositories:
+  cartesian_controllers:
+    type: git
+    url: https://github.com/fzi-forschungszentrum-informatik/cartesian_controllers.git
+    version: ros2
+  feetech_ros2_driver:
+    type: git
+    url: https://github.com/JafarAbdi/feetech_ros2_driver.git
+    version: main
+  libsurvive_ros2:
+    type: git
+    url: https://github.com/asymingt/libsurvive_ros2.git
+    version: main
