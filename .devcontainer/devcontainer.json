@@ -19,9 +19,5 @@
                 "remote.autoForwardPorts": false
             }
         }
-    },
-    "mounts": [
-        "source=${localWorkspaceFolder},target=/home/ros/ros2_ws/src/ros2_so101,type=bind,consistency=cached",
-        "source=${localEnv:HOME}/.env,target=/home/ros/.env,type=bind,consistency=cached"
-    ]
+    }
 }
