@@ -5,6 +5,11 @@
     "dockerComposeFile": "./compose.yaml",
     "workspaceFolder": "/home/ros/ros2_ws/src/ros2_so101",
     "service": "devcontainer",
+    "portsAttributes": {
+        "*": {
+            "onAutoForward": "ignore"
+        }
+    },
     "customizations": {
         "vscode": {
             "extensions": [

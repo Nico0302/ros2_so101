@@ -1,6 +1,6 @@
 ARG ROS_DISTRO=jazzy
 
-FROM osrf/ros:${ROS_DISTRO}-desktop AS base
+FROM ros:${ROS_DISTRO}-ros-base AS base
 
 ENV ROS_DISTRO=${ROS_DISTRO}
 
@@ -9,7 +9,6 @@ ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 ARG USER_PASSWORD=ros
-ARG DEBIAN_FRONTEND=noninteractive
 
 # Disable dpkg/gdebi interactive dialogs
 ENV DEBIAN_FRONTEND=noninteractive
@@ -42,26 +41,20 @@ RUN apt-get update \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
     && rm -rf /var/lib/apt/lists/*
 
+# Install essential packages
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    # === Basic utilities === #
     vim \
-    nano \
-    xterm \
-    # === XRDP related packages === #
-    xfce4 \
-    xfce4-terminal \
-    xorgxrdp \
-    xrdp \
-    dbus-x11 \
-    xfonts-base \
-    # ============================== #
-    build-essential \
-    cmake \
     wget \
     git \
     unzip \
     iputils-ping \
     net-tools \
+    # === Build tools === #
+    build-essential \
+    cmake \
+    # === Python tools === #
     pip \
     python3-venv \
     python3-flake8 \
@@ -69,20 +62,22 @@ RUN apt-get update && \
     python3-setuptools \
     python3-vcstool \
     python3-colcon-common-extensions \
-    cmake \
-    ros-$ROS_DISTRO-ros2-control \
-    ros-$ROS_DISTRO-ros2-controllers \
-    ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
-    ros-$ROS_DISTRO-rmw-zenoh-cpp \
-    ros-$ROS_DISTRO-urdf-launch \
-    ros-$ROS_DISTRO-rqt-joint-trajectory-controller \
-    ros-$ROS_DISTRO-moveit \
-    ros-$ROS_DISTRO-tf-transformations \
-    dpkg
+    # === XRDP desktop === #
+    xfce4 \
+    xterm \
+    xfce4-terminal \
+    xorgxrdp \
+    xrdp \
+    dbus-x11 \
+    xfonts-base
 
+FROM base AS workspace
+
+ENV ROS_DISTRO=${ROS_DISTRO}
+
+# Install additional packages from workspace.packages
 COPY ./workspace.packages ./
-
-RUN xargs -a workspace.packages apt-get install -y --no-install-recommends
+RUN bash -lc "sed \"s/\\\${ROS_DISTRO}/${ROS_DISTRO}/g\" workspace.packages | xargs apt-get install -y --no-install-recommends"
 
 # Symlink python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
@@ -96,17 +91,19 @@ RUN mkdir -p /home/ros/ros2_ws/src
 
 WORKDIR /home/ros/ros2_ws
 
+# Clone repositories
 COPY ./workspace.repos ./
-
 RUN vcs import src < workspace.repos
-    
+
+# Install dependencies using rosdep
 RUN source /opt/ros/$ROS_DISTRO/setup.bash \
     && rosdep update \
     && rosdep install --ignore-src --from-paths . -y -r
 
+# Build the workspace
 COPY ./Makefile ./
-
 RUN source /opt/ros/$ROS_DISTRO/setup.bash \
     && make build
 
+# Source ROS and workspace setup files in .bashrc
 RUN printf "\nsource /opt/ros/$ROS_DISTRO/setup.bash\nsource ~/ros2_ws/install/setup.bash\nsource ~/ros2_ws/src/ros2_so101/scripts/ros_aliases.sh\n" >> ~/.bashrc
