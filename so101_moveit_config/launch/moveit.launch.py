@@ -2,6 +2,7 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, GroupAction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_param_builder import ParameterBuilder
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.conditions import IfCondition
@@ -36,6 +37,11 @@ def generate_launch_description():
             default_value="false",
             description="Use mock system",
         ),
+        DeclareLaunchArgument(
+            "use_servo",
+            default_value="true",
+            description="Setup moveit servo node",
+        ),
     ]
 
     # Configuration variables
@@ -44,6 +50,7 @@ def generate_launch_description():
     usb_port = LaunchConfiguration("usb_port")
     use_sim = LaunchConfiguration("use_sim")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
+    use_servo = LaunchConfiguration("use_servo")
 
     so101_bringup_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -88,5 +95,32 @@ def generate_launch_description():
         ],
     )
 
-    return LaunchDescription(declared_arguments + [so101_bringup_launch, run_move_group_node, rviz_node])
+    # Get parameters for the Servo node
+    servo_params = {
+        "moveit_servo": ParameterBuilder("so101_moveit_config")
+        .yaml("config/moveit_servo.yaml")
+        .to_dict()
+    }
+    # This sets the update rate and planning group name for the acceleration limiting filter.
+    acceleration_filter_update_period = {"update_period": 0.01}
+    planning_group_name = {"planning_group_name": "so101_arm"}
+
+    servo_node = Node(
+        package="moveit_servo",
+        executable="servo_node",
+        name="servo_node",
+        parameters=[
+            servo_params,
+            acceleration_filter_update_period,
+            planning_group_name,
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics,
+            moveit_config.joint_limits,
+        ],
+        output="screen",
+        condition=IfCondition(use_servo),
+    )
+
+    return LaunchDescription(declared_arguments + [so101_bringup_launch, run_move_group_node, rviz_node, servo_node])
 

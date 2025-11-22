@@ -77,15 +77,14 @@ ENV ROS_DISTRO=${ROS_DISTRO}
 
 # Install additional packages from workspace.packages
 COPY ./workspace.packages ./
-RUN bash -lc "sed \"s/\\\${ROS_DISTRO}/${ROS_DISTRO}/g\" workspace.packages | xargs apt-get install -y --no-install-recommends"
+RUN apt-get update && \
+    bash -lc "sed \"s/\\\${ROS_DISTRO}/${ROS_DISTRO}/g\" workspace.packages | xargs apt-get install -y --no-install-recommends"
 
 # Symlink python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Expose VNC port
 EXPOSE 3389/tcp
-
-USER $USERNAME
 
 RUN mkdir -p /home/ros/ros2_ws/src
 
@@ -99,6 +98,8 @@ RUN vcs import src < workspace.repos
 RUN source /opt/ros/$ROS_DISTRO/setup.bash \
     && rosdep update \
     && rosdep install --ignore-src --from-paths . -y -r
+
+USER $USERNAME
 
 # Build the workspace
 COPY ./Makefile ./
