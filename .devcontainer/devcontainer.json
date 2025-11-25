@@ -5,6 +5,7 @@
     "dockerComposeFile": "./compose.yaml",
     "workspaceFolder": "/home/ros/ros2_ws/src/ros2_so101",
     "service": "devcontainer",
+    "postCreateCommand": "make deps && make build",
     "portsAttributes": {
         "*": {
             "onAutoForward": "ignore"

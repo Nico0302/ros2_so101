@@ -5,6 +5,7 @@
   <xacro:arg name="use_fake_hardware" default="false" />
   <xacro:arg name="usb_port" default="/dev/ttyUSB0" />
   <xacro:arg name="ros2_control_type" default="so101_position" />
+  <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
 
   <xacro:include filename="$(find so101_description)/urdf/so101_new_calib.urdf.xacro" />
 
@@ -24,7 +25,8 @@
   <xacro:so101_ros2_control
     name="so101_system" prefix="$(arg prefix)" use_sim="$(arg use_sim)"
     use_fake_hardware="$(arg use_fake_hardware)"
-    usb_port="$(arg usb_port)" />
+    usb_port="$(arg usb_port)"
+    initial_positions_file="$(arg initial_positions_file)" />
 
   <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">

@@ -13,9 +13,6 @@ ARG USER_PASSWORD=ros
 # Disable dpkg/gdebi interactive dialogs
 ENV DEBIAN_FRONTEND=noninteractive
 
-ENV NVIDIA_VISIBLE_DEVICES=all
-ENV NVIDIA_DRIVER_CAPABILITIES=all
-
 SHELL ["/bin/bash", "-c"]
 
 # Delete existing user if it exists
@@ -62,6 +59,9 @@ RUN apt-get update && \
     python3-setuptools \
     python3-vcstool \
     python3-colcon-common-extensions \
+    # === ROS tools === #
+    ros-${ROS_DISTRO}-desktop \
+    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
     # === XRDP desktop === #
     xfce4 \
     xterm \
@@ -75,13 +75,13 @@ FROM base AS workspace
 
 ENV ROS_DISTRO=${ROS_DISTRO}
 
-# Install additional packages from workspace.packages
-COPY ./workspace.packages ./
-RUN apt-get update && \
-    bash -lc "sed \"s/\\\${ROS_DISTRO}/${ROS_DISTRO}/g\" workspace.packages | xargs apt-get install -y --no-install-recommends"
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=all
 
 # Symlink python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
+
+USER $USERNAME
 
 # Expose VNC port
 EXPOSE 3389/tcp
@@ -91,20 +91,16 @@ RUN mkdir -p /home/ros/ros2_ws/src
 WORKDIR /home/ros/ros2_ws
 
 # Clone repositories
-COPY ./workspace.repos ./
-RUN vcs import src < workspace.repos
-
-# Install dependencies using rosdep
-RUN source /opt/ros/$ROS_DISTRO/setup.bash \
-    && rosdep update \
-    && rosdep install --ignore-src --from-paths . -y -r
+# COPY ./workspace.repos ./
+# RUN vcs import src < workspace.repos
 
 USER $USERNAME
 
-# Build the workspace
+# Copy the makefile
 COPY ./Makefile ./
-RUN source /opt/ros/$ROS_DISTRO/setup.bash \
-    && make build
+# RUN source /opt/ros/$ROS_DISTRO/setup.bash \
+#     && make deps \
+#     && make build
 
 # Source ROS and workspace setup files in .bashrc
 RUN printf "\nsource /opt/ros/$ROS_DISTRO/setup.bash\nsource ~/ros2_ws/install/setup.bash\nsource ~/ros2_ws/src/ros2_so101/scripts/ros_aliases.sh\n" >> ~/.bashrc

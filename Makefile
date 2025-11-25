@@ -1,8 +1,15 @@
+.PHONY: deps
+deps:
+	cd ~/ros2_ws \
+	&& rosdep update \
+	&& rosdep install --from-paths src --ignore-src -r -y
+
 .PHONY: build
 build:
 	cd ~/ros2_ws \
-    && colcon build --packages-skip cartesian_controller_simulation cartesian_controller_tests --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install
+    && colcon build --symlink-install
 
-.PHONY: resetvive
-resetvive:
-	rm -rf ~/.config/libsurvive/config.json
+.PHONY: clean
+clean:
+	cd ~/ros2_ws \
+	&& rm -rf build/ install/ log/

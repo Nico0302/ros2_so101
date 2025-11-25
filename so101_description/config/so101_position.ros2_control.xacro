@@ -2,8 +2,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro
     name="so101_ros2_control"
-    params="name prefix usb_port:=^|/dev/ttyUSB0 use_sim:=^|false use_fake_hardware:=^|false"
+    params="name prefix usb_port:=^|/dev/ttyUSB0 use_sim:=^|false use_fake_hardware:=^|false initial_positions_file"
   >
+    <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file)['initial_positions']}"/>
+
     <ros2_control name="${name}" type="system">
       <xacro:if value="$(arg use_sim)">
         <hardware>
@@ -22,8 +24,8 @@
         </hardware>
       </xacro:unless>
       <joint name="${prefix}shoulder_pan">
-        <param name="initial_position">0.0</param>
         <param name="id">1</param>
+        <param name="initial_position">${initial_positions['shoulder_pan']}</param>
         <param name="p_cofficient">10</param>
         <param name="offset">2048</param>
         <command_interface name="position" />
@@ -32,45 +34,45 @@
       </joint>
       <joint name="${prefix}shoulder_lift">
         <param name="id">2</param>
+        <param name="initial_position">${initial_positions['shoulder_lift']}</param>
         <param name="p_cofficient">16</param>
         <param name="offset">1990</param>
-        <param name="initial_position">0.0</param>
         <command_interface name="position" />
         <state_interface name="position" />
         <state_interface name="velocity" />
       </joint>
       <joint name="${prefix}elbow_flex">
         <param name="id">3</param>
+        <param name="initial_position">${initial_positions['elbow_flex']}</param>
         <param name="offset">2068</param>
         <param name="p_cofficient">20</param>
-        <param name="initial_position">0.0</param>
         <command_interface name="position" />
         <state_interface name="position" />
         <state_interface name="velocity" />
       </joint>
       <joint name="${prefix}wrist_flex">
         <param name="id">4</param>
+        <param name="initial_position">${initial_positions['wrist_flex']}</param>
         <param name="offset">2048</param>
         <param name="p_cofficient">20</param>
-        <param name="initial_position">0.0</param>
         <command_interface name="position" />
         <state_interface name="position" />
         <state_interface name="velocity" />
       </joint>
       <joint name="${prefix}wrist_roll">
         <param name="id">5</param>
+        <param name="initial_position">${initial_positions['wrist_roll']}</param>
         <param name="offset">1982</param>
         <param name="p_cofficient">16</param>
-        <param name="initial_position">0.0</param>
         <command_interface name="position" />
         <state_interface name="position" />
         <state_interface name="velocity" />
       </joint>
       <joint name="${prefix}gripper">
         <param name="id">6</param>
+        <param name="initial_position">${initial_positions['gripper']}</param>
         <param name="offset">2048</param>
         <param name="p_cofficient">16</param>
-        <param name="initial_position">0.0</param>
         <command_interface name="position" />
         <state_interface name="position" />
         <state_interface name="velocity" />
