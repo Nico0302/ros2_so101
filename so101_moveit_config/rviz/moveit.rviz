@@ -3,9 +3,10 @@ Panels:
     Help Height: 138
     Name: Displays
     Property Tree Widget:
-      Expanded: ~
+      Expanded:
+        - /Pose1
       Splitter Ratio: 0.5
-    Tree Height: 236
+    Tree Height: 168
   - Class: rviz_common/Views
     Expanded:
       - /Current View1
@@ -108,6 +109,12 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        LHB-AA55515F:
+          Value: true
+        LHB-DEAA21A:
+          Value: true
+        LHR-FF29DD46:
+          Value: true
         base_link:
           Value: true
         gripper_frame_link:
@@ -119,6 +126,8 @@ Visualization Manager:
         moving_jaw_link:
           Value: true
         shoulder_link:
+          Value: true
+        teleop_world:
           Value: true
         upper_arm_link:
           Value: true
@@ -132,6 +141,13 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
+        teleop_world:
+          LHB-AA55515F:
+            {}
+          LHB-DEAA21A:
+            {}
+          LHR-FF29DD46:
+            {}
         world:
           base_link:
             shoulder_link:
@@ -379,6 +395,26 @@ Visualization Manager:
       Trajectory Topic: /display_planned_path
       Use Sim Time: false
       Value: true
+    - Alpha: 0.800000011920929
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz_default_plugins/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.019999999552965164
+      Head Radius: 0.009999999776482582
+      Name: Pose
+      Shaft Length: 0.05000000074505806
+      Shaft Radius: 0.004999999888241291
+      Shape: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /target_pose
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 239; 239; 239
@@ -394,37 +430,39 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 0.6225968599319458
+      Distance: 0.6125596761703491
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.17829442024230957
-        Y: -0.03319179639220238
-        Z: 0.04642176255583763
+        X: 0.3293609023094177
+        Y: -0.07204161584377289
+        Z: 0.260059118270874
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.24979794025421143
+      Pitch: 0.48479804396629333
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.6350107192993164
+      Yaw: 3.4150116443634033
     Saved: ~
 Window Geometry:
-  "":
-    collapsed: false
-  " - Trajectory Slider":
-    collapsed: false
   Displays:
     collapsed: false
-  Height: 897
+  Height: 898
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000001d40000032bfc0200000005fb000000100044006900730070006c006100790073010000003b000001b1000000c700fffffffb0000000a0056006900650077007300000002bd000000a9000000a000fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffbffffffff01000001f2000001740000016900fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00ffffff0000040e0000032b00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  MotionPlanning:
+    collapsed: false
+  MotionPlanning - Trajectory Slider:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd0000000100000000000001d40000032cfc0200000007fb000000100044006900730070006c006100790073010000003b0000016d000000c700fffffffb0000000a0056006900650077007300000002bd000000a9000000a000fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006701000001ae000001b90000016a00fffffffb0000003c005400720061006a006500630074006f007200790020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00ffffff0000040e0000032c00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Trajectory - Trajectory Slider:
+    collapsed: false
   Views:
     collapsed: false
   Width: 1512

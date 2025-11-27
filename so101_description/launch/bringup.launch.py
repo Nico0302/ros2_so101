@@ -74,6 +74,11 @@ def generate_launch_description():
             default_value="false",
             description="Use mock system",
         ),
+        DeclareLaunchArgument(
+            "use_static_transform",
+            default_value="true",
+            description="Publish static transform from world to base_link",
+        ),
     ]
 
     # Configuration variables
@@ -87,6 +92,7 @@ def generate_launch_description():
     use_sim = LaunchConfiguration("use_sim")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     usb_port = LaunchConfiguration("usb_port")
+    use_static_transform = LaunchConfiguration("use_static_transform")
 
     # URDF generation
     robot_description_content = ParameterValue(
@@ -163,6 +169,7 @@ def generate_launch_description():
         name="static_transform_publisher",
         output="log",
         arguments=["--frame-id", "world", "--child-frame-id", "base_link"],
+        condition=IfCondition(use_static_transform),
     )
 
     nodes = [
