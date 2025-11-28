@@ -5,6 +5,9 @@ controller_manager:
     cartesian_motion_controller:
       type: cartesian_motion_controller/CartesianMotionController
 
+    so101_arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
@@ -15,6 +18,20 @@ gripper_controller:
   ros__parameters:
     joint: gripper
     allow_stalling: true
+
+so101_arm_controller:
+  ros__parameters:
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    joints:
+      - shoulder_pan
+      - shoulder_lift
+      - elbow_flex
+      - wrist_flex
+      - wrist_roll
 
 cartesian_motion_controller:
   ros__parameters:
