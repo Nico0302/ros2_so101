@@ -1,9 +1,12 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
-from ament_index_python.packages import get_package_share_directory
+from launch.substitutions import (
+    Command,
+    FindExecutable,
+    LaunchConfiguration,
+    PathJoinSubstitution,
+)
 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -16,8 +19,8 @@ default_controllers = [
 
 PACKAGE_NAME = "so101_description"
 
-def generate_launch_description():
 
+def generate_launch_description():
     # Declare arguments
     declared_arguments = [
         DeclareLaunchArgument(
@@ -39,7 +42,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "controllers_file",
-            default_value="ros2_controllers.yaml",
+            default_value="controllers.yaml",
             description="YAML file with the controllers configuration.",
         ),
         DeclareLaunchArgument(
@@ -114,10 +117,10 @@ def generate_launch_description():
                 use_fake_hardware,
                 " ",
                 "usb_port:=",
-                usb_port
+                usb_port,
             ]
         ),
-        value_type=str
+        value_type=str,
     )
     robot_description = {"robot_description": robot_description_content}
 
@@ -177,7 +180,7 @@ def generate_launch_description():
         rviz_node,
         control_node,
         static_tf_node,
-    ] 
+    ]
 
     for controller in default_controllers + [arm_controller]:
         nodes.append(

@@ -1,0 +1,37 @@
+gripper_teleoperation:
+  ros__parameters:
+    joint_name: "gripper"
+    max_target_value: 1.745329252
+    min_target_value: -0.1745329252
+    gripper_command_topic: "/gripper_controller/gripper_cmd"
+    joystick:
+      toggle_button: 0
+      gripper_axis: 1
+
+pose_teleoparation:
+  ros__parameters:
+    base_frame_id: ur_base
+    virtual_world_frame_id: libsurvive_world
+    controller_frame_id: controller_frame_id
+    end_effector_frame_id: gripper_frame_link
+    bounds:
+      z_min: 0.01
+      z_max: 0.4
+      x_min: -0.2
+      x_max: 0.4
+      y_min: -0.4
+      y_max: 0.4
+    use_relative_pose: False
+    update_rate: 100
+    home:
+      joint_controller_name: joint_trajectory_controller
+      joint_names:
+        - "elbow_flex"
+        - "shoulder_lift"
+        - "shoulder_pan"
+        - "wrist_flex"
+        - "wrist_roll"
+      joint_positions: [1.578, -1.7453, 0.0, 1.2, 0.0]
+    cartesian_controller_name: cartesian_motion_controller
+    joystick:
+      home_button: 3
